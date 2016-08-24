@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using EdiConstructor.Segmentos;
 using EdiConstructor.Segmentos.AuxClass;
 
@@ -9,7 +10,9 @@ namespace EdiConstructor.EDI.Intrastat
         //UNH
         private const string _idTipoMensaje_0065 = "CUSRES";
 
-       
+        //BGM
+        private const string _nombreDocumentoCodificado_1001 = "962";
+
 
         protected override void MontarUnh(string numeroReferenciaMensaje)
         {
@@ -26,12 +29,6 @@ namespace EdiConstructor.EDI.Intrastat
         }
 
 
-        protected override void MontarBgm(string numeroDocumento1004, string codigoDeFuncionDelMensaje1225)
-        {
-            throw new NotImplementedException();
-        }
-
-
 
         protected override void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039, string nombreEntidad)
         {
@@ -44,5 +41,33 @@ namespace EdiConstructor.EDI.Intrastat
             Segmentos.Add(nad);
             Mensaje += nad.getSegmento();
         }
+
+        protected override void MontarBgm(string nifDeclarante, string periodoAño, string periodoMes, string Flujo, string numeroDeclaracion, string codigoDeFuncionDelMensaje1225)
+        {
+            var numDocumento = CrearNumeroDocumento(nifDeclarante, periodoAño, periodoMes, Flujo, numeroDeclaracion);
+            var codFuncMensaje = CleanText(codigoDeFuncionDelMensaje1225);
+
+            var bgm = new BGM(new DocumentoDelMensaje(_nombreDocumentoCodificado_1001, null, null, null),
+                              numDocumento,
+                              codFuncMensaje,
+                              null);
+
+            Segmentos.Add(bgm);
+            Mensaje += bgm.getSegmento();
+        }
+
+
+        private string CrearNumeroDocumento(string nifDeclarante, string periodAño, string periodMes, string flujo, string numeroDeclaracion)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(nifDeclarante);
+            sb.Append(periodAño + "" + periodMes);
+            sb.Append(flujo);
+            sb.Append(numeroDeclaracion);
+
+            return sb.ToString();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using EdiConstructor.Segmentos;
+﻿using System;
+using EdiConstructor.Segmentos;
 using EdiConstructor.Segmentos.AuxClass;
 
 namespace EdiConstructor.EDI.Intrastat
@@ -21,8 +22,15 @@ namespace EdiConstructor.EDI.Intrastat
         protected const string _agenciaControladora_0051 = "UN";
         protected const string _codigoAsignadoDeAsociacion_0057 = "INT003";
 
+
         //MOA
         private const string _monedaCodificada = "EUR";
+        private const string _calificadorTipoImporteTotalDeclaracion = "39";
+        private const string _calificadorTipoImporteEspecificacionEuros = "ZZZ";
+
+        //DTM
+        private const string _calificadorFechaHoraPeriodo = "320";
+        private const string _calificadorFechaHoraAltaDocumento = "137";
 
         //RFF
         private const string _calificadorReferencia_1153 = "ACW";
@@ -57,17 +65,17 @@ namespace EdiConstructor.EDI.Intrastat
 
 
         protected abstract void MontarUnh(string numeroReferenciaMensaje);
-        protected abstract void MontarBgm(string numeroDocumento1004, string codigoDeFuncionDelMensaje1225);
+        protected abstract void MontarBgm(string nifDeclarante,string periodoAño,string periodoMes,string Flujo,string numeroDeclaracion,  string codigoDeFuncionDelMensaje1225);
 
 
-        protected void MontarCstCabecera(string codigoIdentificacionAduanera7361, string calificadorListaCodigos1131)
-        {
-            var cst = new CST(null,
-                              new CodigoIdentificacionAduanera(codigoIdentificacionAduanera7361, calificadorListaCodigos1131, null));
+        //protected void MontarCstCabecera(string codigoIdentificacionAduanera7361, string calificadorListaCodigos1131)
+        //{
+        //    var cst = new CST(null,
+        //                      new CodigoIdentificacionAduanera(codigoIdentificacionAduanera7361, calificadorListaCodigos1131, null));
 
-            Segmentos.Add(cst);
-            Mensaje += cst.getSegmento();
-        }
+        //    Segmentos.Add(cst);
+        //    Mensaje += cst.getSegmento();
+        //}
 
 
         protected void MontarDtm(string calificadorFecha2005, string fechaHora)
@@ -76,6 +84,30 @@ namespace EdiConstructor.EDI.Intrastat
             var _fechaHora = CleanText(fechaHora);
 
             var dtm = new DTM(new FechaHoraPeriodo(_calificadorFecha, _fechaHora, null));
+
+            Segmentos.Add(dtm);
+            Mensaje += dtm.getSegmento();
+        }
+
+
+        protected void MontarDtmFechaPeriodo(string periodoAño,string periodoMes)
+        {
+           // var _calificadorFecha = CleanText(calificadorFecha2005);
+           // var _fechaHora = CleanText(fechaHora);
+            var periodo = periodoAño + "" + periodoMes;
+
+            var dtm = new DTM(new FechaHoraPeriodo(_calificadorFechaHoraPeriodo, periodo, null));
+
+            Segmentos.Add(dtm);
+            Mensaje += dtm.getSegmento();
+        }
+
+        protected void MontarDtmAltaDocumento(DateTime fechaAltaDocumento)
+        {
+           // var _calificadorFecha = CleanText(calificadorFecha2005);
+            var _fechaHora = fechaAltaDocumento.ToString("yyMMdd");
+
+            var dtm = new DTM(new FechaHoraPeriodo(_calificadorFechaHoraAltaDocumento, _fechaHora, null));
 
             Segmentos.Add(dtm);
             Mensaje += dtm.getSegmento();
@@ -112,6 +144,23 @@ namespace EdiConstructor.EDI.Intrastat
             Segmentos.Add(moa);
             Mensaje += moa.getSegmento();
         }
+
+        protected void MontarMoaEspecificacionEuros()
+        {
+            var moa = new MOA(new ImporteMonetario(_calificadorTipoImporteEspecificacionEuros, null, _monedaCodificada, null, null));
+
+            Segmentos.Add(moa);
+            Mensaje += moa.getSegmento();
+        }
+
+        protected void MontarMoaImporteTotal(string importeMonetario5004)
+        {
+            var moa = new MOA(new ImporteMonetario(_calificadorTipoImporteTotalDeclaracion, null, _monedaCodificada, null, null));
+
+            Segmentos.Add(moa);
+            Mensaje += moa.getSegmento();
+        }
+
 
 
         //Controlar
