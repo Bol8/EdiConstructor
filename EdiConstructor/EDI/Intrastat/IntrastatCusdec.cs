@@ -15,6 +15,9 @@ namespace EdiConstructor.EDI.Intrastat
         //CST
         private const string _calificadorListaCodigos1131 = "176";
 
+        ////GIS
+        //private const
+
         //Está OK
         protected override void MontarUnh(string numeroReferenciaMensaje)
         {
@@ -57,35 +60,45 @@ namespace EdiConstructor.EDI.Intrastat
             Mensaje += cst.getSegmento();
         }
 
-        //protected override void MontarBgm(string numeroDocumento1004, string codigoDeFuncionDelMensaje1225, string periodoMes, string flujo, string numeroDeclaracion, string s)
+        protected void MontarUns(string identificacionDeSeccion0081)
+        {
+            var uns = new UNS(identificacionDeSeccion0081);
+
+            Segmentos.Add(uns);
+            Mensaje += uns.getSegmento();
+        }
+
+        protected void MontarCnt(string calificadorControl6069, string valorControl6066)
+        {
+            var cnt = new CNT(new ControlDeTotales(calificadorControl6069, valorControl6066, null));
+
+            Segmentos.Add(cnt);
+            Mensaje += cnt.getSegmento();
+        }
+
+
+        //Controlar
+        protected void MontarGis(string indicadorProcesoCodificado7365, string calificadorListaCodigosCodificado1131)
+        {
+            var dtm = new GIS(new IndicadorDeProceso(indicadorProcesoCodificado7365, calificadorListaCodigosCodificado1131,
+                              null, null));
+
+            Segmentos.Add(dtm);
+            Mensaje += dtm.getSegmento();
+        }
+
+
+
+        ////Controlar
+        //protected void MontarGisDeclaracionSinOperacion(string indicadorProcesoCodificado7365, string calificadorListaCodigosCodificado1131)
         //{
+        //    var dtm = new GIS(new IndicadorDeProceso(indicadorProcesoCodificado7365, calificadorListaCodigosCodificado1131,
+        //                      null, null));
 
-        //    var numDocumento = CleanText(numeroDocumento1004);
-        //    var codFuncMensaje = CleanText(codigoDeFuncionDelMensaje1225);
-
-        //    var bgm = new BGM(new DocumentoDelMensaje(_nombreDocumentoCodificado_1001, null, null, null),
-        //                      numDocumento,
-        //                      codFuncMensaje,
-        //                      null);
-
-        //    Segmentos.Add(bgm);
-        //    Mensaje += bgm.getSegmento();
+        //    Segmentos.Add(dtm);
+        //    Mensaje += dtm.getSegmento();
         //}
 
-        //protected override void MontarBgm(string numeroDocumento1004, string codigoDeFuncionDelMensaje1225)
-        //{
-
-        //    var numDocumento = CleanText(numeroDocumento1004);
-        //    var codFuncMensaje = CleanText(codigoDeFuncionDelMensaje1225);
-
-        //    var bgm = new BGM(new DocumentoDelMensaje(_nombreDocumentoCodificado_1001, null, null, null),
-        //                      numDocumento,
-        //                      codFuncMensaje,
-        //                      null);
-
-        //    Segmentos.Add(bgm);
-        //    Mensaje += bgm.getSegmento();
-        //}
 
 
         protected override void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039, string nombreEntidad)

@@ -12,7 +12,6 @@ namespace EdiConstructor.EDI.Intrastat
         private const string _codCalificadorIdentificacionParticipante_0007 = "ZZ";
         private const string _idReceptor_0010 = "AEATADUE";
 
-
         //UNZ
         private const string _cuentaControlIntercambio_0036 = "1";
 
@@ -22,6 +21,8 @@ namespace EdiConstructor.EDI.Intrastat
         protected const string _agenciaControladora_0051 = "UN";
         protected const string _codigoAsignadoDeAsociacion_0057 = "INT003";
 
+        //NAD
+        private const string 
 
         //MOA
         private const string _monedaCodificada = "EUR";
@@ -34,6 +35,10 @@ namespace EdiConstructor.EDI.Intrastat
 
         //RFF
         private const string _calificadorReferencia_1153 = "ACW";
+
+
+
+
 
         //Está OK
         protected void MontarUnb(string idEmisor, string referenciaControlIntercambio0020, bool indicadorPrueba)
@@ -68,16 +73,6 @@ namespace EdiConstructor.EDI.Intrastat
         protected abstract void MontarBgm(string nifDeclarante,string periodoAño,string periodoMes,string Flujo,string numeroDeclaracion,  string codigoDeFuncionDelMensaje1225);
 
 
-        //protected void MontarCstCabecera(string codigoIdentificacionAduanera7361, string calificadorListaCodigos1131)
-        //{
-        //    var cst = new CST(null,
-        //                      new CodigoIdentificacionAduanera(codigoIdentificacionAduanera7361, calificadorListaCodigos1131, null));
-
-        //    Segmentos.Add(cst);
-        //    Mensaje += cst.getSegmento();
-        //}
-
-
         protected void MontarDtm(string calificadorFecha2005, string fechaHora)
         {
             var _calificadorFecha = CleanText(calificadorFecha2005);
@@ -92,8 +87,6 @@ namespace EdiConstructor.EDI.Intrastat
 
         protected void MontarDtmFechaPeriodo(string periodoAño,string periodoMes)
         {
-           // var _calificadorFecha = CleanText(calificadorFecha2005);
-           // var _fechaHora = CleanText(fechaHora);
             var periodo = periodoAño + "" + periodoMes;
 
             var dtm = new DTM(new FechaHoraPeriodo(_calificadorFechaHoraPeriodo, periodo, null));
@@ -104,21 +97,12 @@ namespace EdiConstructor.EDI.Intrastat
 
         protected void MontarDtmAltaDocumento(DateTime fechaAltaDocumento)
         {
-           // var _calificadorFecha = CleanText(calificadorFecha2005);
             var _fechaHora = fechaAltaDocumento.ToString("yyMMdd");
 
             var dtm = new DTM(new FechaHoraPeriodo(_calificadorFechaHoraAltaDocumento, _fechaHora, null));
 
             Segmentos.Add(dtm);
             Mensaje += dtm.getSegmento();
-        }
-
-        protected void MontarCnt(string calificadorControl6069, string valorControl6066)
-        {
-            var cnt = new CNT(new ControlDeTotales(calificadorControl6069, valorControl6066, null));
-
-            Segmentos.Add(cnt);
-            Mensaje += cnt.getSegmento();
         }
 
         protected void MontarUnt(string numeroSegmentosMensaje0074, string numeroReferenciaMensaje0062)
@@ -129,14 +113,7 @@ namespace EdiConstructor.EDI.Intrastat
             Mensaje += unt.getSegmento();
         }
 
-        protected void MontarUns(string identificacionDeSeccion0081)
-        {
-            var uns = new UNS(identificacionDeSeccion0081);
-
-            Segmentos.Add(uns);
-            Mensaje += uns.getSegmento();
-        }
-
+       
         protected void MontarMoa(string calificadorTipoImporte5025, string importeMonetario5004)
         {
             var moa = new MOA(new ImporteMonetario(calificadorTipoImporte5025, importeMonetario5004, _monedaCodificada, null, null));
@@ -162,20 +139,11 @@ namespace EdiConstructor.EDI.Intrastat
         }
 
 
-
         //Controlar
         protected abstract void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039,
             string nombreEntidad);
 
-        //Controlar
-        protected void MontarGis(string indicadorProcesoCodificado7365, string calificadorListaCodigosCodificado1131)
-        {
-            var dtm = new GIS(new IndicadorDeProceso(indicadorProcesoCodificado7365, calificadorListaCodigosCodificado1131,
-                              null, null));
-
-            Segmentos.Add(dtm);
-            Mensaje += dtm.getSegmento();
-        }
+       
 
         protected void MontarRff(string numeroReferencia1154)
         {
