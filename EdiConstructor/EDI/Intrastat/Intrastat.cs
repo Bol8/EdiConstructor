@@ -1,4 +1,5 @@
-﻿using EdiConstructor.Segmentos;
+﻿using System.Text;
+using EdiConstructor.Segmentos;
 using EdiConstructor.Segmentos.AuxClass;
 
 namespace EdiConstructor.EDI.Intrastat
@@ -10,7 +11,6 @@ namespace EdiConstructor.EDI.Intrastat
         private const string _numeroVersionSintaxis_0002 = "1";
         private const string _codCalificadorIdentificacionParticipante_0007 = "ZZ";
         private const string _idReceptor_0010 = "AEATADUE";
-
 
         //UNZ
         private const string _cuentaControlIntercambio_0036 = "1";
@@ -27,7 +27,7 @@ namespace EdiConstructor.EDI.Intrastat
         //RFF
         private const string _calificadorReferencia_1153 = "ACW";
 
-        //Está OK
+
         protected void MontarUnb(string idEmisor, string referenciaControlIntercambio0020, bool indicadorPrueba)
         {
             var _idEmisor = CleanText(idEmisor);
@@ -43,7 +43,6 @@ namespace EdiConstructor.EDI.Intrastat
             Mensaje += unb.getSegmento();
         }
 
-        //Está OK
         protected void MontarUnz(string referenciaControlIntercambio)
         {
             var refControl = CleanText(referenciaControlIntercambio);
@@ -54,11 +53,8 @@ namespace EdiConstructor.EDI.Intrastat
             Mensaje += unz.getSegmento();
         }
 
-
-
         protected abstract void MontarUnh(string numeroReferenciaMensaje);
         protected abstract void MontarBgm(string numeroDocumento1004, string codigoDeFuncionDelMensaje1225);
-
 
         protected void MontarCstCabecera(string codigoIdentificacionAduanera7361, string calificadorListaCodigos1131)
         {
@@ -68,7 +64,6 @@ namespace EdiConstructor.EDI.Intrastat
             Segmentos.Add(cst);
             Mensaje += cst.getSegmento();
         }
-
 
         protected void MontarDtm(string calificadorFecha2005, string fechaHora)
         {
@@ -113,12 +108,18 @@ namespace EdiConstructor.EDI.Intrastat
             Mensaje += moa.getSegmento();
         }
 
+        protected  void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039, string nombreEntidad)
+        {
+            var _idEntidadCod = CleanText(identificacionEntidadCodificada3039);
+            var _nomEntidad = CleanText(nombreEntidad);
 
-        //Controlar
-        protected abstract void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039,
-            string nombreEntidad);
+            var nad = new NAD(calificadorDeEntidad3035, new IdentificacionDeLaParte(_idEntidadCod, null, null),
+                              null, _nomEntidad, null, null, null, null, null);
 
-        //Controlar
+            Segmentos.Add(nad);
+            Mensaje += nad.getSegmento();
+        }
+
         protected void MontarGis(string indicadorProcesoCodificado7365, string calificadorListaCodigosCodificado1131)
         {
             var dtm = new GIS(new IndicadorDeProceso(indicadorProcesoCodificado7365, calificadorListaCodigosCodificado1131,
@@ -137,17 +138,16 @@ namespace EdiConstructor.EDI.Intrastat
         }
 
 
+        protected string crearDocumento(string nifDeclarante,string periodoAño,string periodMes,string Flujo,string numeroDeclaracion)
+        {
+            var sb = new StringBuilder();
 
-        //protected void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039, string nombreEntidad)
-        //{
-        //    var _idEntidadCod = CleanText(identificacionEntidadCodificada3039);
-        //    var _nomEntidad = CleanText(nombreEntidad);
+            sb.Append(nifDeclarante);
+            sb.Append(periodoAño + "" + periodMes);
+            sb.Append(Flujo);
+            sb.Append(numeroDeclaracion);
 
-        //    var nad = new NAD(calificadorDeEntidad3035, new IdentificacionDeLaParte(_idEntidadCod, null, null),
-        //                      null, _nomEntidad, null, null, null, null, null);
-
-        //    Segmentos.Add(nad);
-        //    Mensaje += nad.getSegmento();
-        //}
+            return sb.ToString();
+        }
     }
 }

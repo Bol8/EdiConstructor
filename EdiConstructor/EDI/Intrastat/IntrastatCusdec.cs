@@ -12,7 +12,6 @@ namespace EdiConstructor.EDI.Intrastat
         private const string _nombreDocumentoCodificado_1001 = "896";
 
 
-
         protected override void MontarUnh(string numeroReferenciaMensaje)
         {
             var _numeroReferencia = CleanText(numeroReferenciaMensaje);
@@ -43,16 +42,5 @@ namespace EdiConstructor.EDI.Intrastat
         }
 
 
-        protected override void MontarNad(string calificadorDeEntidad3035, string identificacionEntidadCodificada3039, string nombreEntidad)
-        {
-            var _idEntidadCod = CleanText(identificacionEntidadCodificada3039);
-            var _nomEntidad = CleanText(nombreEntidad);
-
-            var nad = new NAD(calificadorDeEntidad3035, new IdentificacionDeLaParte(_idEntidadCod, null, null),
-                              null, _nomEntidad, null, null, null, null, null);
-
-            Segmentos.Add(nad);
-            Mensaje += nad.getSegmento();
-        }
     }
 }
